@@ -11,18 +11,88 @@
 
 #include "ofMain.h"
 #include "ofxBullet.h"
+#include "chinoWorld.h"
 #include "Scenario.h"
 
-class PinballChinoManager {
+#include "GameStatusDisplay.h"
+#include "InputEventManager.h"
+#include "ofxXmlSettings.h"
+#include "Ball.h"
+#include "eventObjectScenario.h"
+#include "eventMoveObjectScenario.h"
+#include "arduComunicationManager.h"
+#include "DMXManager.h"
+#include "OSCManager.h"
+#include "SimpleMission.h"
+#include "MissionInfoDisplay.h"
+#include "LightsManager.h"
+//#include "ofxShadow.h"
+#include "ScenarioEditor.h"
+#include "WebSocketsManager.h"
+
+class PinballChinoManager: public InputEventManager {
     
 public:
+    
+    PinballChinoManager();
+    
 	void setup();
 	void update();
 	void draw();
+    void keyReleased(int key);
+    void onCollision(ofxBulletCollisionData& cdata);
     
-    ofxBulletWorldRigid     world;
-	ofCamera                camera;
+    chinoWorld     world;
+	
+	////Inputs
+	arduComunicationManager arduCom;
+    WebSocketsManager webSock;
+    
+    ///Outputs
+    DMXManager dmx;
+    OSCManager osc;
+    
+	/////////////////////////////////////////
+    ofEasyCam				camera;
+    ofMatrix4x4 savedPose;
+	ofxXmlSettings XML;
+	void saveCameraPosition(ofMatrix4x4 _camPose);
+	ofMatrix4x4 loadCameraPosition();
+    bool bMouseCameraEvents(bool activate);
+	//////////////////////////////////////////
+    LightsManager           chinoLights;
+    
     
     Scenario                myScenario;
+    //ScenarioEditor          scenarioEditor;
+    GameStatusDisplay       statusDisplay;
+    MissionInfoDisplay      missionDisplay;
     
+    
+    
+	vector<SimpleMission *> currentMissions;
+	int idcurrentMission;
+	
+    bool bFullScreen;
+    bool bDrawDebug;
+    
+    void onRestartGameEvent(void);
+    void onMoveLeftLeverEvent(void);
+    void onReleaseLeftLeverEvent(void);
+    void onMoveRightLeverEvent(void);
+    void onReleaseRightLeverEvent(void);
+    void onMoveBallLauncherEvent(void);
+    void onReleaseBallLauncherEvent(void);
+    void ToggleDrawDebug(void);
+	
+	//Shadoew
+	//ofxShadow simple_shadow;
+
+    
+	
+private:
+	
+	void listenerAddObject2Scenario(eventObjectScenario & args);
+	void listenerMovingObjectScenario(eventMoveObjectScenario & args);
+	
 };

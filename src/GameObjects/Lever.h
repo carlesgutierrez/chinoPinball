@@ -10,25 +10,45 @@
 
 #include "SimpleObject.h"
 
+
 class Lever : public SimpleObject {
     
 public:
-	
-	virtual void setup(ofxBulletWorldRigid &world);
-	virtual void update();
-	virtual void draw();
-	void rotateLever(float a_yaw, float a_pitch, float a_roll);
-	
-	void applyPushLeft();
-	
-	void keyPressed(ofKeyEventArgs& key);
-	void keyReleased(ofKeyEventArgs& key);
     
-	ofxBulletBox	body;
-    ofxBulletJoint joint;
+    Lever(vector <SimpleMission *> * _currentMissions);
+	void setup(ofxBulletWorldRigid &world, ofVec3f setPosition, string url, ofVec3f ModelScale, int setDirection);
+    
+	void update(bool bEditorMode);
+	void draw(bool bEditorMode);
+	void rotate(float degrees);
 	
-	//ofxBulletSphere *           shape; // generic bullet shape object. it is a sphere only for testing.
-    float counter;
-	ofVec3f vecRot;
+	void setupRot();
+    
+	ofxBulletCustomShape	body;
+    
+    
+	//ofVec3f         position;
+    int             direction; // rotation direction: 1 - clockwise, 0 - counter clockwise
+    
+    btQuaternion    rotationLever;
+    
+    float angle; // degrees
+	float lowerLimit;
+	float upperLimit;
+    float speed, speedUp, speedDown;
+    float axisX;
+    
+    bool isKeyPressed;
+    void onMoveEvent();
+    void onReleaseEvent();
+    
+    ofxBulletBaseShape* getBulletBaseShape();
+    string getObjectName();
+    
+    void onCollision();
+    void setDefaultZ();
+    void setPosition(ofVec3f position);
+    void setRotation(ofQuaternion rotation);
+    
     
 };
